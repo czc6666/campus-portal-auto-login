@@ -1,9 +1,9 @@
 # 校园网 Portal 自动登录框架
 
-一个兼容 **Windows 交付场景** 与 **源码运行场景（含早期 Linux 路线）** 的校园网 Portal 自动化登录、故障诊断与新站点采集框架。
+一个面向中国校园网认证页场景的自动登录、页面采集与故障排查开源项目。
 
 > 它不是“所有学校都开箱即用”的万能脚本。  
-> 它更适合这样的人：已经知道自己的学校使用的是 Web Portal 认证，愿意通过 Profile 适配页面差异，或者先跑 Collector 采集登录页信息再做适配。
+> 它更适合已经知道自己学校使用 Web Portal 认证、并愿意按页面实际情况做少量适配的人。
 
 ## 仓库地址
 
@@ -11,59 +11,65 @@
 
 ---
 
-## 这个项目是什么
+## 项目简介
 
 这个仓库提炼自一个长期闭源维护的校园网自动登录项目。
 
-核心思路是把问题拆成四层：
+它的目标不是把所有学校都做成“一键通用”，而是提供一套可复用的基础骨架，让你可以围绕校园网 Portal 认证页去做：
 
-- `核心_core/`：通用登录引擎、探针、浏览器操作、提交流程、Wi-Fi 重连、诊断导出
+- 自动登录
+- 页面采集
+- 状态校验
+- 故障排查
+- 新学校适配
+
+项目主体分成四层：
+
+- `核心_core/`：通用登录引擎、探针、浏览器操作、提交流程、诊断导出
 - `学校配置_profiles/`：学校差异配置层
 - `examples/`：公开示例入口与环境变量用法
-- `工具_tools/采集器_collector/`：当现有 Profile 不适用时，用于采集目标学校 Portal 页面信息
+- `工具_tools/采集器_collector/`：用于采集目标学校 Portal 页面信息
 
 一句话：
 
-**这是一个配置驱动的校园网 Portal 自动化适配框架，而不是一个承诺适配所有学校的一键工具。**
+**这是一个配置驱动的校园网 Portal 自动化适配项目，而不是一个承诺适配所有学校的一键工具。**
 
 ---
 
-## 为什么这个项目值得开源
+## 为什么值得开源
 
-它开源的价值不在“某一个学校能不能一键登录”，而在于沉淀出了几件可以复用的东西：
+这个项目的价值不在“某一个学校能不能一键登录”，而在于沉淀出了一套可复用的方法：
 
 - 把“一校一脚本”抽象成 `SchoolProfile`
-- 把校园网 Portal 自动化里常见的脏页面问题做成了可复用策略
-- 把“失败后怎么排障”做成了结构化证据导出
-- 把“新学校怎么建模”做成了 Collector 采集器
+- 把常见 Portal 脏页面问题做成可复用策略
+- 把失败后的排障流程做成结构化诊断导出
+- 把新学校页面建模做成 Collector 采集器
 
-所以它更像一个 **校园网 Portal 自动化工程骨架**，不是一个单次脚本成品。
+所以它更像一个 **校园网 Portal 自动化工程骨架**，而不是一个一次性脚本。
 
 ---
 
-## 两条实际运行路线
+## 浏览器运行方式
 
-这个项目历史上其实有两条路线，不是一条：
+这个项目历史上主要有两种运行方式：
 
-### 路线 A：源码运行路线（更通用）
+### 1. 源码运行方式
 特点：
 
-- 早期主要通过 Playwright 自带浏览器运行
-- 当时更容易兼容 Linux / 跨平台源码运行
-- 适合开发、调试、研究 Portal 页面
-- 代价是用户侧通常需要 Python 环境与依赖安装
+- 更适合开发、调试、研究 Portal 页面
+- 早期更容易兼容 Linux / 跨平台源码运行
+- 通常依赖 Python 环境、Playwright 和对应浏览器运行时
 
-### 路线 B：Windows 交付路线（更适合给客户）
+### 2. Windows 本地运行方式
 特点：
 
-- 现在更偏向用 **Playwright 的包去驱动系统里的 Edge**
-- 适合后续用 PyInstaller 打包成单文件 exe
-- 更方便直接丢给客户电脑运行
-- 不要求客户自己先配 Python 环境
+- 更适合日常自用或在 Windows 机器上长期运行
+- 当前代码更偏向用 **Playwright 的包去驱动系统里的 Edge**
+- 也方便后续继续做 PyInstaller 单文件打包
 
-所以更准确的说法不是“项目只用 Playwright 自带浏览器”，也不是“完全不用 Playwright 浏览器”，而是：
+更准确地说：
 
-**项目同时保留了源码运行的通用路线，以及面向 Windows 交付的 Edge 优先路线。**
+**这个项目依赖 Playwright 的自动化能力，但既保留了较通用的源码运行方式，也保留了更贴近 Windows 实际使用的 Edge 优先方式。**
 
 ---
 
@@ -104,7 +110,7 @@
 适合远程排障和后续 Profile 修正。
 
 ### 4. 自带 Collector 采集器
-当目标学校无法直接适配时，可以让用户先跑 `collector.py` / `collector.exe`：
+当目标学校无法直接适配时，可以先跑 `collector.py` / `collector.exe`：
 
 - 自动记录导航链
 - 保存主页面 DOM 和 frame DOM
@@ -122,9 +128,9 @@
 
 ---
 
-## 当前公开版保留了什么
+## 当前公开版包含什么
 
-这个公开仓保留的是：
+这个公开仓当前主要包含：
 
 - 通用核心逻辑
 - `SchoolProfile` 类型定义
@@ -133,7 +139,7 @@
 - Collector 源码
 - 示例入口与说明文档
 
-这个公开仓**没有**包含：
+这个公开仓**不包含**：
 
 - 真实客户账号入口
 - 大部分已验证学校的现成配置
@@ -146,7 +152,7 @@
 
 ## 已适配学校说明
 
-历史上这个项目已经适配过一些学校/Portal 场景，包括：
+历史上这个项目已经适配过一些学校 / Portal 场景，包括：
 
 - 江西理工大学
 - 太原理工大学（学校登录模式已改，原配置已失效）
@@ -158,24 +164,18 @@
 - 成都航空职业技术学院
 - 亳州学院
 
-当前公开仓里，**只额外公开江西理工大学配置**，原因很简单：
+当前公开仓里，**只额外公开江西理工大学配置**。原因很简单：
 
 - 江西理工大学是项目作者自己的学校
 - 把这份配置公开出来，更像是一种校友向母校做的小贡献
-- 其他学校的现成配置暂不直接公开，主要是为了避免维护成本失控，也保留后续协助适配与交流的空间
+- 其他学校的现成配置暂不直接公开，主要是为了避免维护成本失控，同时保留后续适配交流空间
 
-如果你只是想看怎么写一个真实可用的学校配置，优先参考：
+如果你只是想看一个真实可用的学校配置，优先参考：
 
 - `学校配置_profiles/jxust.py`
 - `学校配置_profiles/example_drcom.py`
 - `学校配置_profiles/example_srun.py`
 - `学校配置_profiles/example_gportal.py`
-
-如果你所在学校不在公开配置里，可以：
-
-- 先运行 Collector 采集页面
-- 再参考示例自己补 Profile
-- 如果你不想自己调试或维护，也可以联系作者交流已适配经验，或获取付费定制适配支持
 
 ---
 
@@ -198,7 +198,8 @@ campus-portal-auto-login/
 │   ├── types.py
 │   ├── example_drcom.py
 │   ├── example_srun.py
-│   └── example_gportal.py
+│   ├── example_gportal.py
+│   └── jxust.py
 ├── 工具_tools/
 │   └── 采集器_collector/
 │       └── collector.py
@@ -225,42 +226,23 @@ campus-portal-auto-login/
 pip install -r requirements.txt
 ```
 
-如果你走的是**源码运行路线**，通常还需要准备 Playwright 浏览器运行时：
+如果你走的是**源码运行方式**，通常还需要准备 Playwright 浏览器运行时：
 
 ```bash
 python -m playwright install chromium
 ```
 
-如果你走的是**Windows Edge 交付路线**，重点是：
+如果你更偏向 **Windows + Edge** 的运行方式，重点是：
 
-- 构建机安装 `playwright`
-- 目标机器已安装 Microsoft Edge
+- 当前机器已安装 Microsoft Edge
+- 环境里有 `playwright`
 - 运行时优先由 Playwright 调用系统 Edge，而不是优先使用 Playwright 自带 Chromium
 
 ---
 
-## 2. 两种使用方式
+## 2. 运行示例
 
-### 方式 A：源码运行
-适合：
-- 你自己调试
-- 你需要更通用的运行方式
-- 你可能在 Linux 或其他非纯 Windows 交付环境中研究页面
-
-推荐准备：
-- Python 3.x
-- `playwright`
-- 需要时安装 Playwright 浏览器运行时
-- `pywifi`（如果你要自动连 Wi-Fi）
-
-示例：
-
-```bash
-cp examples/.env.example .env
-# 然后按需修改 PROFILE_MODULE / CAMPUS_USERNAME / CAMPUS_PASSWORD
-```
-
-Linux / macOS shell 示例：
+### Linux / macOS shell 示例
 
 ```bash
 export PROFILE_MODULE=学校配置_profiles.example_drcom
@@ -270,34 +252,7 @@ export RUN_ONCE=1
 python examples/run_with_env.py
 ```
 
-### 方式 B：Windows 交付 / 打包
-适合：
-- 面向客户交付
-- 希望最终是单文件 exe
-- 优先调用客户电脑已有的 Edge
-
-通常需要：
-- Python 3.x（构建机上）
-- `playwright`
-- `pyinstaller`
-- Windows + Edge
-
-构建 Collector 的示例命令：
-
-```powershell
-scripts\build_collector.bat
-```
-
-> 关键点：当前项目依赖的是 **Playwright 运行时能力**。  
-> 在 Windows 交付路线里，主链路通常是 **用 Playwright 的包驱动系统 Edge**；并不是优先让客户直接使用 Playwright 自带 Chromium。
-
-> 公开仓当前重点是保留代码与方法论，没有强行重构成标准 `pip install` 包结构。
-
----
-
-## 3. 使用示例入口
-
-Windows PowerShell 示例：
+### Windows PowerShell 示例
 
 ```powershell
 $env:PROFILE_MODULE="学校配置_profiles.example_drcom"
@@ -307,7 +262,7 @@ $env:RUN_ONCE="1"
 python examples\run_with_env.py
 ```
 
-Windows CMD 示例：
+### Windows CMD 示例
 
 ```cmd
 set PROFILE_MODULE=学校配置_profiles.example_drcom
@@ -326,9 +281,9 @@ python examples\run_with_env.py
 
 ---
 
-## 4. 如果示例 Profile 不适合你的学校
+## 3. 如果示例不适合你的学校
 
-不要先急着改核心逻辑，优先做这两件事：
+不要先急着改核心逻辑，建议按这个顺序来：
 
 1. 先看公开的江西理工大学配置 `学校配置_profiles/jxust.py` 和几个脱敏示例
 2. 如果页面结构很陌生，先跑 Collector 采集 Portal 页面
@@ -344,7 +299,7 @@ python examples\run_with_env.py
 - 想把“一校一脚本”整理成统一框架
 - 已知学校 Portal 可被浏览器自动化操作
 - 需要远程排障、复盘失败现场
-- 需要兼顾“源码运行调试”和“Windows 打包交付”两条路线
+- 需要兼顾“源码运行调试”和“Windows 本地运行”两种方式
 
 不适合：
 
@@ -382,7 +337,7 @@ python examples\run_with_env.py
 
 ---
 
-## 项目定位建议
+## 项目定位
 
 如果你打算基于这个项目二次开发，推荐把它理解成：
 
