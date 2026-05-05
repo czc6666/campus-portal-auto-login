@@ -1,9 +1,13 @@
-# Campus Network Portal Toolkit
+# 校园网 Portal 自动登录框架
 
 一个兼容 **Windows 交付场景** 与 **源码运行场景（含早期 Linux 路线）** 的校园网 Portal 自动化登录、故障诊断与新站点采集框架。
 
 > 它不是“所有学校都开箱即用”的万能脚本。  
 > 它更适合这样的人：已经知道自己的学校使用的是 Web Portal 认证，愿意通过 Profile 适配页面差异，或者先跑 Collector 采集登录页信息再做适配。
+
+## 仓库地址
+
+- GitHub: `czc6666/campus-portal-auto-login`
 
 ---
 
@@ -21,6 +25,19 @@
 一句话：
 
 **这是一个配置驱动的校园网 Portal 自动化适配框架，而不是一个承诺适配所有学校的一键工具。**
+
+---
+
+## 为什么这个项目值得开源
+
+它开源的价值不在“某一个学校能不能一键登录”，而在于沉淀出了几件可以复用的东西：
+
+- 把“一校一脚本”抽象成 `SchoolProfile`
+- 把校园网 Portal 自动化里常见的脏页面问题做成了可复用策略
+- 把“失败后怎么排障”做成了结构化证据导出
+- 把“新学校怎么建模”做成了 Collector 采集器
+
+所以它更像一个 **校园网 Portal 自动化工程骨架**，不是一个单次脚本成品。
 
 ---
 
@@ -120,10 +137,11 @@
 ## 目录结构
 
 ```text
-campus-network-portal-toolkit/
+campus-portal-auto-login/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
+├── requirements.txt
 ├── docs/
 ├── examples/
 │   ├── .env.example
@@ -154,9 +172,29 @@ campus-network-portal-toolkit/
 
 ## 快速开始
 
-## 1. 环境假设
+## 1. 安装依赖
 
-当前项目更适合按两种方式理解：
+先安装基础依赖：
+
+```bash
+pip install -r requirements.txt
+```
+
+如果你走的是**源码运行路线**，通常还需要准备 Playwright 浏览器运行时：
+
+```bash
+python -m playwright install chromium
+```
+
+如果你走的是**Windows Edge 交付路线**，重点是：
+
+- 构建机安装 `playwright`
+- 目标机器已安装 Microsoft Edge
+- 运行时优先由 Playwright 调用系统 Edge，而不是优先使用 Playwright 自带 Chromium
+
+---
+
+## 2. 两种使用方式
 
 ### 方式 A：源码运行
 适合：
@@ -164,11 +202,28 @@ campus-network-portal-toolkit/
 - 你需要更通用的运行方式
 - 你可能在 Linux 或其他非纯 Windows 交付环境中研究页面
 
-此时通常需要：
+推荐准备：
 - Python 3.x
 - `playwright`
 - 需要时安装 Playwright 浏览器运行时
 - `pywifi`（如果你要自动连 Wi-Fi）
+
+示例：
+
+```bash
+cp examples/.env.example .env
+# 然后按需修改 PROFILE_MODULE / CAMPUS_USERNAME / CAMPUS_PASSWORD
+```
+
+Linux / macOS shell 示例：
+
+```bash
+export PROFILE_MODULE=学校配置_profiles.example_drcom
+export CAMPUS_USERNAME=your-campus-account
+export CAMPUS_PASSWORD=your-campus-password
+export RUN_ONCE=1
+python examples/run_with_env.py
+```
 
 ### 方式 B：Windows 交付 / 打包
 适合：
@@ -176,11 +231,17 @@ campus-network-portal-toolkit/
 - 希望最终是单文件 exe
 - 优先调用客户电脑已有的 Edge
 
-此时通常需要：
+通常需要：
 - Python 3.x（构建机上）
 - `playwright`
 - `pyinstaller`
 - Windows + Edge
+
+构建 Collector 的示例命令：
+
+```powershell
+scripts\build_collector.bat
+```
 
 > 关键点：当前项目依赖的是 **Playwright 运行时能力**。  
 > 在 Windows 交付路线里，主链路通常是 **用 Playwright 的包驱动系统 Edge**；并不是优先让客户直接使用 Playwright 自带 Chromium。
@@ -189,11 +250,21 @@ campus-network-portal-toolkit/
 
 ---
 
-## 2. 使用示例入口
+## 3. 使用示例入口
 
-先设置环境变量，再运行：
+Windows PowerShell 示例：
 
 ```powershell
+$env:PROFILE_MODULE="学校配置_profiles.example_drcom"
+$env:CAMPUS_USERNAME="your-campus-account"
+$env:CAMPUS_PASSWORD="your-campus-password"
+$env:RUN_ONCE="1"
+python examples\run_with_env.py
+```
+
+Windows CMD 示例：
+
+```cmd
 set PROFILE_MODULE=学校配置_profiles.example_drcom
 set CAMPUS_USERNAME=your-campus-account
 set CAMPUS_PASSWORD=your-campus-password
@@ -204,13 +275,13 @@ python examples\run_with_env.py
 如果你想一直守护循环，而不是只跑一次：
 
 ```powershell
-set RUN_ONCE=0
+$env:RUN_ONCE="0"
 python examples\run_with_env.py
 ```
 
 ---
 
-## 3. 如果示例 Profile 不适合你的学校
+## 4. 如果示例 Profile 不适合你的学校
 
 不要先急着改核心逻辑，优先做这两件事：
 

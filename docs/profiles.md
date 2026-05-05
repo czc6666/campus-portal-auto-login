@@ -68,6 +68,12 @@ Portal 地址与可达性检查：
 - `edge_then_chromium`
 - `chromium_only`
 
+#### 怎么理解这三个模式
+
+- `edge_only`：只尝试系统 Edge，适合 Windows 客户交付
+- `edge_then_chromium`：先试系统 Edge，失败后再 fallback 到 Playwright Chromium
+- `chromium_only`：直接走 Playwright Chromium，更接近早期源码运行路线
+
 ### `timing`
 时间参数：
 
@@ -108,6 +114,23 @@ Wi-Fi 自动连接策略：
 
 ---
 
+## 一个实用判断原则
+
+如果你现在：
+
+- 没有真实校园网环境
+- 不能做实网回归验证
+- 只是为了整理公开仓或新增示例
+
+那就更应该：
+
+- 优先补文档
+- 优先补示例 Profile
+- 优先做脱敏整理
+- **不要轻易改核心登录逻辑**
+
+---
+
 ## 示例文件
 
 公开仓提供了三种脱敏示例：
@@ -120,3 +143,4 @@ Wi-Fi 自动连接策略：
 
 - 典型字段怎么填
 - 不同 Portal 风格怎么建模
+- 两条浏览器路线下的 Profile 思路怎么落地
