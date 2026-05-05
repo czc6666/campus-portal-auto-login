@@ -1,0 +1,60 @@
+from 学校配置_profiles.types import (
+    BrowserConfig,
+    InputConfig,
+    PortalConfig,
+    ProbeConfig,
+    SchoolProfile,
+    SelectorConfig,
+    TimingConfig,
+)
+
+
+PROFILE = SchoolProfile(
+    id="jxust",
+    name="江西理工大学",
+    portal=PortalConfig(
+        url_candidates=[
+            "http://10.17.8.18/a79.htm",
+            "http://10.17.8.18/",
+        ],
+        reachable_host="10.17.8.18",
+        reachable_port=80,
+        wait_sec=25,
+        goto_retries=3,
+    ),
+    selectors=SelectorConfig(
+        username=[
+            "input[name='DDDDD'][type='text']",
+            "input[name='DDDDD']",
+        ],
+        password=[
+            "input[name='upass'][type='password']",
+            "input[name='upass']",
+            "input[type='password']",
+        ],
+        login_button=[
+            "input[name='0MKKey'][type='button']",
+            "input[name='0MKKey']",
+            "input[type='button'][value*='登录']",
+        ],
+        operator=[
+            "input[name='network'][value='{value}']",
+        ],
+        captcha=[
+            "input[name='captcha']",
+            "#captcha_img",
+        ],
+    ),
+    input=InputConfig(mode="js_first"),
+    browser=BrowserConfig(mode="edge_then_chromium", headless=False),
+    timing=TimingConfig(
+        check_interval_sec=30,
+        login_wait_sec=8,
+        retry_cooldown_sec=30,
+        probe_timeout_sec=6,
+        action_timeout_ms=20000,
+        navigation_timeout_ms=30000,
+    ),
+    probe=ProbeConfig(mode="multi"),
+    operator_value="@cmcc",
+)
