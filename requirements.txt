@@ -1,0 +1,8 @@
+# Runtime dependencies for source-based use
+playwright>=1.40
+
+# Optional at runtime; needed if you want automatic Wi-Fi reconnect via pywifi
+pywifi>=1.1.12
+
+# Optional build dependency for packaging collector.exe or other single-file tools
+pyinstaller>=6.0
